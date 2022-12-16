@@ -1,0 +1,69 @@
+<h2>Modifying a DataFrame</h2>
+<html><body><p>Previously, we have discussed how we can access columns and rows in a <code class="language-python">pandas</code> <code class="language-python">DataFrame</code>. Now, let's figure out how we can modify a <code class="language-python">DataFrame</code> structure. In this topic, you'll learn the operations of <strong>adding</strong> new rows and columns and <strong>deleting</strong> old ones.</p>
+<h5 id="adding-columns">Adding columns </h5>
+<p>First, you need to import <code class="language-python">pandas</code> and create a <code class="language-python">DataFrame</code> from a dictionary:</p>
+<pre><code class="language-python">import pandas as pd
+
+pets = {
+    'species': ['cat', 'dog', 'parrot', 'cockroach'], 
+    'pet_name': ['Dr. Mittens Lamar', 'Diesel', 'Peach', 'Richard'], 
+    'legs': [4, 4, 2, 6],
+    'wings': [0, 0, 2, 4],
+    'homeless': ['no', 'no', 'no', 'yes']
+}
+df = pd.DataFrame(pets)
+df.head()</code></pre>
+<p>Here is the output:</p>
+<p><img alt="" src="https://ucarecdn.com/461ea95a-8a6c-4d49-89af-e41934886430/"/></p>
+<p>In <code class="language-python">pandas</code>, it's possible to create new columns on the fly. Just address the <code class="language-python">DataFrame</code> with a new column name and pass the values:</p>
+<pre><code class="language-python">df['mood'] = ['sleepy', 'happy', 'thinking', 'excited']
+df.head()</code></pre>
+<p>Output:</p>
+<p><img alt="" src="https://ucarecdn.com/736df075-e1f5-4b9c-b17f-a6386e41865e/"/></p>
+<p></p><div class="alert alert-warning">The number of values must match the number of rows in the <code class="language-python">DataFrame</code>.</div>
+<p>You can also derive a new column based on the existing one. Suppose you want to create the <code class="language-python">pairs_of_legs</code> column based on the <code class="language-python">legs</code> column. You take and divide it by 2:</p>
+<pre><code class="language-python">df['pairs_of_legs'] = df.legs/2
+df.head()</code></pre>
+<p>Here is the output:</p>
+<p><img alt="" src="https://ucarecdn.com/73205624-bb24-4222-ac00-05ade230a10c/"/></p>
+<p>As a result, we have a float-type column. It's possible to use other types of mathematical operations. You can also use string operations, like concatenation. Let's create a new column called <code class="language-python">description</code> from <code class="language-python">mood</code> and <code class="language-python">species</code>:</p>
+<pre><code class="language-python">df['description'] = df.mood + ' ' + df.species
+df.head()</code></pre>
+<p>Output:</p>
+<p><img alt="" src="https://ucarecdn.com/276ee5f9-004e-4844-8504-e65b9765feee/"/></p>
+<p>We also added whitespace between the columns for readability.</p>
+<h5 id="adding-rows">Adding rows </h5>
+<p>If you need to add a row, use the <code class="language-python">pd.concat()</code> method. The first parameter must be an iterable object, for example, a list, that contains <code class="language-python">DataFrames</code> or  <code class="language-python">Series</code>.The second parameter is <code class="language-python">ignore_index</code>. It is <code class="language-python">False</code> by default. If we set it as <code class="language-python">True</code>, the <code class="language-python">DataFrame</code> will be reindexed from 0 up to the new row. <code class="language-python">pd.concat()</code> doesn't change the data but returns the new <code class="language-python">DataFrame</code> with the row, added to the end. Let's do it:</p>
+<pre><code class="language-python">new_row = {'pet_name': 'Turtle', 
+            'species': 'turtle',
+            'legs': 4,
+            'wings': 0,
+            'homeless': 'no',
+            'mood': 'skeptical',
+            'pairs_of_legs': 2,
+            'description': 'skeptical turtle'}
+df = pd.concat([df, pd.DataFrame.from_records([new_row])], ignore_index=True)
+df.head()</code></pre>
+<p>Here is the output:</p>
+<p><img alt="" src="https://ucarecdn.com/89187172-52bf-44a8-8f7a-86841ad1c824/"/></p>
+<p>Note that the new row has <code class="language-python">4</code> as an index and <code class="language-python">pair_of_legs</code> automatically became float (column type).</p>
+<h5 id="deleting-columns">Deleting columns</h5>
+<p>You can delete a whole <code class="language-python">DataFrame</code> with a single method — <code class="language-python">DataFrame.drop()</code>. Since we have the <code class="language-python">description</code> column, you don't need <code class="language-python">species</code> and <code class="language-python">mood</code> any more, so let's get rid of them! We can call <code class="language-python">.drop</code> and pass these labels to the <code class="language-python">columns</code> argument. This method also returns a <code class="language-python">DataFrame</code> by default, but you can also set <code class="language-python">inplace</code> to <code class="language-python">True</code> for the changes to take place:</p>
+<pre><code class="language-python">df.drop(columns=['species', 'mood'], inplace=True)
+df.head()</code></pre>
+<p>Here is the output:</p>
+<p><img alt="" src="https://ucarecdn.com/2e20abca-4abe-4053-b23e-97dc9361b716/"/></p>
+<p>Since we want to delete several columns, we can pass their labels as a list.</p>
+<h5 id="deleting-rows">Deleting rows</h5>
+<p>If you want to delete rows, follow the same rules but use the <code class="language-python">index</code> argument:</p>
+<pre><code class="language-python">df.drop(index=3, inplace=True)
+df.head()</code></pre>
+<p>Here is the output:</p>
+<p><img alt="" src="https://ucarecdn.com/2895deb3-3600-4b2a-8000-bbfda654d3cf/"/></p>
+<p>There are a few things to mention — we passed an integer row label (as we have an ordinal integer index). The <code class="language-python">DataFrame</code> index now is not sequentially numbered. It doesn't contain <code class="language-python">3</code>, and if we want to fix that, we have to use <code class="language-python">.reset_index(drop=True, inplace=True)</code>. The most popular way to delete rows is to filter the <code class="language-python">DataFrame</code> against a condition and put the selection (skip the rows you don't need) to <code class="language-python">df</code> or any other <code class="language-python">DataFrame</code> variable. We will master the art of selection in the topics to come.</p>
+<h5 id="conclusion">Conclusion</h5>
+<p>In this topic, you've learned:</p>
+<ul>
+<li>how to add  columns and rows with <code class="language-python">pd.concat()</code></li>
+<li>how to delete rows and columns with  <code class="language-python">.drop()</code></li>
+</ul></body></html>

@@ -1,0 +1,21 @@
+type: choice
+is_multiple_choice: false
+options:
+- text: "&lt;code&gt;df.groupby(&#x27;island&#x27;, as_index=False).agg({&#x27;island&#x27;:\
+    \ &#x27;count&#x27;})&lt;/code&gt;"
+- text: "&lt;code&gt;df.groupby(&#x27;island&#x27;, as_index=False).agg({&#x27;species&#x27;:\
+    \ &#x27;count&#x27;})&lt;/code&gt;"
+- text: "&lt;code&gt;df.groupby(&#x27;island&#x27;).agg({&#x27;species&#x27;: &#x27;count&#x27;})&lt;/code&gt;"
+- text: "&lt;code&gt;df.groupby(&#x27;island&#x27;, as_index=False).agg({&#x27;sex&#x27;:\
+    \ &#x27;count&#x27;})&lt;/code&gt;"
+files:
+- name: main.py
+  visible: true
+  text: |+
+    #  You can experiment here, it won’t be checked
+
+  learner_created: false
+feedback_link: https://hyperskill.org/learn/step/12587#comment
+status: Solved
+record: -1
+local_check: false

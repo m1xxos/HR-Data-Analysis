@@ -1,0 +1,17 @@
+<h2>Music store</h2>
+<html><body><p>We have the following <code class="language-python">DataFrames</code> that store lists of musical instruments that we can buy in a music store, the identifier of their category, and average prices:</p>
+<pre><code class="language-python">keyboard_instruments = pd.DataFrame({'cat_id': ['001', '002', '003'],
+                                     'Instrument': ['Acoustic piano', 'Electric piano', 'Synthesizer'],
+                                     'Average price': ['$10,000', '$5,000', '$1,200']},
+                                    index=[1, 2, 3])
+
+string_instruments = pd.DataFrame({'cat_id': ['004', '005', '006'],
+                                   'Instrument': ['Acoustic guitar', 'Cello', 'Violin'],
+                                   'Average price': ['$2,000', '$1,500', '$2,000']},
+                                  index=[1, 2, 3])</code></pre>
+<p>After concatenation, we got the following dataset:</p>
+<p style="text-align: center;"><img alt="" src="https://ucarecdn.com/53150abb-76ba-47a9-b763-72628f5bdc61/-/crop/257x197/565,512/-/preview/"/></p>
+<p>Which parameters did we adjust to create this <code class="language-python">DataFrame</code>? Write the body of the function <code class="language-python">concatenate_data()</code> that will process two given datasets in the same way and return the resultant combined object. You do NOT need to call the function or print any results.</p></body></html><br><br><font color="gray">Memory limit: 256 MB</font><br><font color="gray">Time limit: 15 seconds</font><br><br>
+<b>Caution</b><br><br>
+You may see errors in your code or execution results due to missing context. Don’t worry about it, just write the solution and press Check.
+<br><br>

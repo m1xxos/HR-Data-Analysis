@@ -1,0 +1,21 @@
+type: choice
+is_multiple_choice: true
+options:
+- text: "<code>.loc</code> takes arguments in the following order: [&lt;columns selection=\"\
+    ...\"&gt;, &lt;row selection=\"...\"&gt;]"
+- text: <code>.loc</code> is for integer position-based locator
+- text: "<code>.loc</code> takes arguments in the following order: [&lt;row selection=\"\
+    ...\"&gt;, &lt;columns selection=\"...\"&gt;]"
+- text: <code>.loc</code> is for label based locator
+- text: <code>.loc</code> can NOT handle integer-based indexes as labels
+files:
+- name: main.py
+  visible: true
+  text: |+
+    #  You can experiment here, it won’t be checked
+
+  learner_created: false
+feedback_link: https://hyperskill.org/learn/step/13345#comment
+status: Solved
+record: -1
+local_check: false

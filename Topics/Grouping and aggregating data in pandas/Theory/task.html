@@ -1,0 +1,79 @@
+<h2>Grouping and aggregating data in pandas</h2>
+<html><body><p><strong>Aggregation</strong> is very important for data analysis. We use it when we need to provide an assessment of our dataset values. By performing aggregation, we transform our data into information.</p>
+<p>In this topic, we are going to use the Palmer Penguins dataset as an example. You can import it from GitHub using the following lines (internet connection required):</p>
+<p> </p>
+<pre><code class="language-python">import pandas as pd
+df = pd.read_csv(
+'https://raw.githubusercontent.com/mwaskom/seaborn-data/master/penguins.csv')</code></pre>
+<p>The title of each column speaks for itself:</p>
+<pre><code class="language-python">df.head(3)</code></pre>
+<p>Output:<br/>
+<img alt="" src="https://ucarecdn.com/ebcb00a8-45d8-47ae-95fc-41677a60f1fe/"/></p>
+<p style="text-align: center;"><img alt="" height="162" name="logo.png" src="https://ucarecdn.com/6085b854-f507-41f2-80bd-493b4b33ad86/" width="140"/></p>
+<h5 id="dataframeaggregate">DataFrame.aggregate</h5>
+<p><code class="language-python">aggregate()</code><strong> </strong>is a <code class="language-python">pandas</code> DataFrame and Series method that is used for data aggregation. It can be used for one or many functions along any axis. To save some time for Really Important Things (like Machine Learning or Netflix), you may want to use the shorter version of the method — <code class="language-python">agg()</code>. Let's have a look at the following examples.</p>
+<p>Suppose we want to find the median value of the penguin's body mass. You can do it by applying the <code class="language-python">agg()</code> method to the desired series:</p>
+<pre><code class="language-python">df.body_mass_g.agg('median')</code></pre>
+<p>Output:<br/>
+<img alt="" src="https://ucarecdn.com/41bc6065-4d81-40a6-b853-c145d4a97bbb/"/></p>
+<p>Four kilos of black-and-white antarctic cuteness!</p>
+<p>Another way to do it is by calling the <code class="language-python">median()</code> method from the Series:</p>
+<pre><code class="language-python">df.body_mass_g.median()</code></pre>
+<p>The difference is that by using the <code class="language-python">agg()</code> function, we are also able to apply several aggregating functions to different columns. For example, let's find the shortest and the average penguin bill as well as the longest and the average flipper. To do this, we need to call <code class="language-python">agg()</code> and create a Python dictionary using the columns as dictionary keys. Also, we need to put the aggregating functions in lists:</p>
+<pre><code class="language-python">df.agg({'bill_length_mm': ['min', 'mean'],
+         'flipper_length_mm': ['max', 'mean']
+        })</code></pre>
+<p>Output:<br/>
+<img alt="" src="https://ucarecdn.com/ece74c60-e420-4ee6-83e6-5d41ad23c7e6/"/></p>
+<p><button class="btn-sm btn-outline-secondary" onclick="getElementById('hint-2598').style.display='inline'">
+        Hint
+      </button>
+</p><div id="hint-2598" style="display:none;">The function outputs <code class="language-python">NaN</code> for the values we have not specified.</div>
+<p>It's also possible to aggregate the data with your own functions. The example of the function below outputs the number of missing values. If the set contains no such values, it puts <code class="language-python">0</code> (by default):</p>
+<pre><code class="language-python">def count_nulls(series, ok_message=0):
+    if not series.isna().sum():
+        return ok_message
+    return len(series) - series.count()</code></pre>
+<p>Let's use it in our DataFrame:</p>
+<pre><code class="language-python">df.agg(count_nulls)</code></pre>
+<p>Output:<br/>
+<img alt="" src="https://ucarecdn.com/3fcc8e9a-76dc-4f8d-9875-2653dfd84245/"/></p>
+<p>If you need to pass a parameter to the <code class="language-python">agg()</code> function, just list their names and values separated by a comma after the function name:</p>
+<pre><code class="language-python">df.agg(count_nulls, ok_message='Hurray!')</code></pre>
+<p>Output:<br/>
+<img alt="" src="https://ucarecdn.com/cd39f6c5-d2df-4c78-a635-82e6680406a4/"/></p>
+<p><button class="btn-sm btn-outline-secondary" onclick="getElementById('hint-3650').style.display='inline'">
+        Hint
+      </button>
+</p><div id="hint-3650" style="display:none;">If you use non-<code class="language-python">pandas</code> functions (<code class="language-python">NumPy</code> or your own) — don't put their names in quotes.</div>
+<p>If you want to find the biggest value for each penguin (though in this example the result is obvious), apply <code class="language-python">agg()</code> over the columns by setting the <code class="language-python">axis</code> argument to <code class="language-python">'<span style="color: #000000;">columns'</span></code>. We can also call the <code class="language-python">agg()</code> method to slice the data frame that contains only numeric values. Let's use the Python built-in <code class="language-python">max()</code> function. It results in a <code class="language-python">pandas</code> Series:</p>
+<pre><code class="language-python">df[['bill_length_mm', 'flipper_length_mm', 'flipper_length_mm']].agg(max, 
+axis='columns')</code></pre>
+<p>Output:<br/>
+<img alt="" src="https://ucarecdn.com/6f210df1-6c44-4c95-8e10-99c3046eee50/"/></p>
+<h5 id="dataframegroupby">DataFrame.groupby</h5>
+<p>We can get a statistical output from different columns with aggregation, but to understand the data deeper, we need to have a closer look at various slices and combinations of columns. For this purpose, we can use <code class="language-python">groupby()</code>. It's a very simple tool, especially for those who are already familiar with SQL.</p>
+<p>Now let's check the median bill length for females and males. Group all penguins by their sex and aggregate them with one line:</p>
+<pre><code class="language-python">df.groupby(['sex']).agg({'bill_length_mm':'median'})</code></pre>
+<p>Output:<br/>
+<img alt="" src="https://ucarecdn.com/4f2e89a9-c565-4561-a763-b8cb6b80718a/"/></p>
+<p> </p>
+<p>The <code class="language-python">df.groupby(['sex'])</code> alone outputs something like "&lt;pandas.core.groupby.generic.DataFrameGroupBy object at 0x000002A1E7BE8358&gt;". That's because it's just an object in memory with split values for indicated groups. The interpreter doesn't know what to output unless you directly specify it with <code class="language-python">agg()</code>. </p>
+<p>As you've noticed, the "sex" column contains 11 missing values (some penguins preferred not to share their gender). To include them in our grouping, set the <code class="language-python">groupby</code> <code class="language-python">dropna</code> argument to <code class="language-python">False</code> (<code class="language-python">pandas</code> 1.1 or higher required):</p>
+<pre><code class="language-python">df.groupby('sex', dropna=False).agg({'bill_length_mm':'median'})</code></pre>
+<p>Output:<br/>
+<img alt="" src="https://ucarecdn.com/6e7141d0-ed89-4f08-9156-3b7b78f9f4fe/"/></p>
+<p>Now we can assume that penguins of unknown sex are mostly females.</p>
+<p>Next, let's suppose that the penguin's diet varies by island, and it affects the bill length. To check whether it makes sense or not, group our antarctic friends by island and sex. Keep in mind that when we need to pass several arguments, we need to pass a list:</p>
+<pre><code class="language-python">df.groupby(['island', 'sex']).agg({'bill_length_mm':'median'})</code></pre>
+<p>Output:<br/>
+<img alt="" src="https://ucarecdn.com/36f364b2-4b96-495c-9b64-c83bd6e87444/"/></p>
+<p>The argument order in the <code class="language-python">groupby()</code> argument list determines the grouping order. Groups come first, then subgroups, subgroups of subgroups, and so on.</p>
+<h5 id="conclusion">Conclusion</h5>
+<p>In this topic, you have learned how to:</p>
+<ul>
+<li>calculate the column summary statistics with the help of <code class="language-python">agg()</code></li>
+<li>separate dataset into groups with the help of <code class="language-python">groupby()</code>.</li>
+</ul>
+<p>These <code class="language-python">pandas</code> functions can help you find outliers in the data, evaluate a series of observations and compare groups against the desired statistical feature.</p>
+<p>Nevertheless, bear in mind the possible result, when you conduct a complicated aggregation and grouping of real data. One diagram drawn on paper can save hours of fixing the code. If you keep getting errors and wrong answers, it probably has nothing to do with Python usage — your logic might be faulty.</p></body></html>

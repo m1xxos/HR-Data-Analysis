@@ -1,0 +1,23 @@
+type: code
+files:
+- name: main.py
+  visible: true
+  text: |-
+    import pandas as pd
+
+    race_sample = {'Lap_1': [98109, 100573, 101467, 104196, 105340],
+                   'Lap_2': [93006, 93774, 93725, 94485, 95808],
+                   'Lap_3': [92713, 92900, 93208, 95664, 95436],
+                   'Lap_4': [92803, 92582, 92933, 93900, 95810]}
+
+    df = pd.DataFrame(race_sample, index=['Vettel', 'Hamilton', 'Webber', 'Massa', 'Rosberg'])
+
+    # your code here
+    print(...)
+  learner_created: false
+feedback_link: https://hyperskill.org/learn/step/12592#comment
+status: Solved
+feedback:
+  message: <html>Correct solution</html>
+  time: "Fri, 16 Dec 2022 12:19:19 UTC"
+record: -1

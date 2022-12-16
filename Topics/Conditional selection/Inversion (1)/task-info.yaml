@@ -1,0 +1,15 @@
+type: code
+custom_name: Inversion
+files:
+- name: main.py
+  visible: true
+  text: |-
+    # your code here. The DataFrame is already loaded as a_rains.
+    print(...)
+  learner_created: false
+feedback_link: https://hyperskill.org/learn/step/13306#comment
+status: Solved
+feedback:
+  message: <html>Correct solution</html>
+  time: "Mon, 05 Dec 2022 17:55:28 UTC"
+record: -1

@@ -1,0 +1,18 @@
+type: choice
+is_multiple_choice: false
+options:
+- text: "<code> df = df.append(['col1': 1, 'col2': 2, 'col3': 3], ignore_index=True)</code>"
+- text: "<code> df = df.append({'col1': 1, 'col2': 2, 'col3': 3}, ignore_index=True)</code>"
+- text: "<code>df['row'] = [1, 2, 3]</code>"
+- text: "<code>df.append({col1: 1, col2: 2, col3: 3}, ignore_index=True)</code>"
+files:
+- name: main.py
+  visible: true
+  text: |+
+    #  You can experiment here, it won’t be checked
+
+  learner_created: false
+feedback_link: https://hyperskill.org/learn/step/13009#comment
+status: Solved
+record: -1
+local_check: false

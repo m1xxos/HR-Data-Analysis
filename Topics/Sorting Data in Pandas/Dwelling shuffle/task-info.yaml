@@ -1,0 +1,12 @@
+type: code
+files:
+- name: main.py
+  visible: true
+  text: "import pandas as pd\n\ndf = pd.DataFrame({\n    \"type_of_dwelling\": ['Private\
+    \ house', 'Townhouse', 'Apartment', 'Townhouse'], \n    \"walls_material\": ['wood',\
+    \ 'concrete', 'blocks', 'bricks'], \n    \"number_of_persons\": [4, 8, 2, 3]},\n\
+    \    index=[41, 44, 42, 43])\n\n# your code here\nprint(...)"
+  learner_created: false
+feedback_link: https://hyperskill.org/learn/step/15185#comment
+status: Solved
+record: -1

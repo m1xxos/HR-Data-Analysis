@@ -1,0 +1,24 @@
+type: dataset
+files:
+- name: main.py
+  visible: true
+  text: "#  write your code here \n\n"
+  learner_created: false
+- name: data/sample/input.txt
+  visible: true
+  text: |
+    ,null_deg,60_deg,90_deg,180_deg,240_deg,labels
+    0,0.740204,0.981484,0.605161,0.67712,0.55432,R
+    1,0.788051,0.68378,0.504151,0.713523,0.690165,M
+    2,0.6373,0.668011,0.35894,0.804288,0.713663,M
+    3,0.560475,0.487072,0.103085,0.668011,0.805988,R
+  learner_created: false
+- name: data/dataset/input.txt
+  visible: true
+  learner_created: true
+feedback_link: https://hyperskill.org/learn/step/14378#comment
+status: Failed
+feedback:
+  message: Wrong solution
+  time: "Fri, 16 Dec 2022 13:26:55 UTC"
+record: -1

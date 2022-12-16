@@ -1,0 +1,19 @@
+type: choice
+is_multiple_choice: true
+options:
+- text: "<code>df.drop(columns = col1, inplace=True)</code>"
+- text: <code>df.col1.drop(inplace=True)</code>
+- text: <code>col1.drop(inplace=True)</code>
+- text: "<code>df.drop(columns = 'col1', inplace=True)</code>"
+- text: "<code>df.drop(['col1'], axis = 1, inplace=True)</code>"
+files:
+- name: main.py
+  visible: true
+  text: |+
+    #  You can experiment here, it won’t be checked
+
+  learner_created: false
+feedback_link: https://hyperskill.org/learn/step/13010#comment
+status: Solved
+record: -1
+local_check: false

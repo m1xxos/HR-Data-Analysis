@@ -1,0 +1,16 @@
+type: code
+files:
+- name: main.py
+  visible: true
+  text: |-
+    import pandas as pd
+
+    def merge_data(user_info, emails):
+        pass
+  learner_created: false
+feedback_link: https://hyperskill.org/learn/step/12354#comment
+status: Solved
+feedback:
+  message: <html>Correct solution</html>
+  time: "Wed, 07 Dec 2022 21:27:10 UTC"
+record: -1

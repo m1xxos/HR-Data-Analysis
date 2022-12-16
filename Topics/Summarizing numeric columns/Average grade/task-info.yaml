@@ -1,0 +1,14 @@
+type: code
+files:
+- name: main.py
+  visible: true
+  text: |-
+    # your code here. The DataFrame is already loaded as grades
+    print(...)
+  learner_created: false
+feedback_link: https://hyperskill.org/learn/step/13364#comment
+status: Solved
+feedback:
+  message: <html>Correct solution</html>
+  time: "Thu, 15 Dec 2022 20:08:16 UTC"
+record: -1

@@ -1,0 +1,16 @@
+type: code
+files:
+- name: main.py
+  visible: true
+  text: |-
+    import pandas as pd
+
+    def concatenate_data(keyboard_instruments, string_instruments):
+        pass
+  learner_created: false
+feedback_link: https://hyperskill.org/learn/step/12355#comment
+status: Solved
+feedback:
+  message: <html>Correct solution</html>
+  time: "Wed, 07 Dec 2022 21:31:13 UTC"
+record: -1

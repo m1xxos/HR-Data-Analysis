@@ -1,0 +1,9 @@
+<h2>Inversion</h2>
+<html><body><p>Look at a part of the Rain in Australia dataset:</p>
+<pre><code class="language-python">a_rains.head()</code></pre>
+<p><img alt="" src="https://ucarecdn.com/0f21c625-5dc5-49dd-9305-ba0c211f5558/"/></p>
+<p>Then look at this fancy selection:</p>
+<pre><code class="language-python">a_rains[(((a_rains.Location == 'Perth') &amp; (a_rains.RainToday == 'No'))
+       | ((a_rains.Location == 'Sydney') &amp; (a_rains.RainToday == 'Yes')))
+       &amp; ~((a_rains.MaxTemp &gt; 10) &amp; (a_rains.Rainfall &gt;= .3))]</code></pre>
+<p>Please, select all rows except that selection and print the result.</p></body></html><br><br><font color="gray">Memory limit: 256 MB</font><br><font color="gray">Time limit: 15 seconds</font><br><br>

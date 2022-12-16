@@ -1,0 +1,131 @@
+<h2>Combining Data in Pandas</h2>
+<html><body><p>As you already know, there are two main data structures in <code class="language-python">pandas</code>: one-dimensional <code class="language-python">Series</code> and two-dimensional <code class="language-python">DataFrame</code>. Earlier, you learned to create objects of both types. You also learned that you can transfer data from different files and tables to <code class="language-python">DataFrames</code>. Now, imagine that you have to work with multiple similar or related datasets and process them in the same way. What's the first thing you could do to ease this task? Perhaps, you would like to combine them. Luckily for you, <code class="language-python">pandas</code> suggests several ways to do it. In this topic, you will learn how to join <code class="language-python">DataFrame</code> and <code class="language-python">Series</code> objects using the <code class="language-python">concat()</code> and <code class="language-python">merge()</code> functions.</p>
+<p>As usual, don't forget to import <code class="language-python">pandas</code>!</p>
+<pre><code class="language-python">import pandas as pd</code></pre>
+<h5 id="concatenating-objects">Concatenating objects</h5>
+<p>The <code class="language-python">concat()</code> function is used to <strong>concatenate</strong> or glue multiple objects together along a horizontal or vertical axis. To do so, we need to pass multiple <code class="language-python">Series</code> or <code class="language-python">DataFrame</code> objects as arguments to the function. But first, we will create two <code class="language-python">DataFrame</code> instances — the tables that store students' names and their results after running distances of 100 meters and 2 kilometers respectively:</p>
+<pre><code class="language-python">junior_class = pd.DataFrame({'Name': ['Ann', 'Kate', 'George', 'Eric'],
+                             '100m (sec.)': ['16.3', '17.1', '14.8', '14.3'],
+                             '2km (min., sec.)': ['9,24', '9,45', '9,17', '8,14']},
+                            index=[1, 2, 3, 4])
+senior_class = pd.DataFrame({'Name': ['Jack', 'Alicia', 'Ella', 'James'],
+                             '100m (sec.)': ['15.9', '17.8', '17.0', '15.0'],
+                             '2km (min., sec.)': ['8,18', '9,02', '8,58', '7,58']})</code></pre>
+<p>Mind that their indexes are different and independent of each other: the first <code class="language-python">DataFrame</code> is indexed in the range 1-4 and the second one has the default 0, 1, 2, ... . It is done for illustration purposes: indexing is important in concatenation, so we will show how such differences affect the results and how you can reset the initial values.</p>
+<p>Now, we should pass the <code class="language-python">DataFrames</code> to <code class="language-python">concat()</code> as a sequence or mapping:</p>
+<pre><code class="language-python">pd.concat([junior_class, senior_class])
+
+#      Name 100m (sec.) 2km (min., sec.)
+# 1     Ann        16.3             9,24
+# 2    Kate        17.1             9,45
+# 3  George        14.8             9,17
+# 4    Eric        14.3             8,14
+# 0    Jack        15.9             8,18
+# 1  Alicia        17.8             9,02
+# 2    Ella        17.0             8,58
+# 3   James        15.0             7,58</code></pre>
+<p>As you could notice, the second <code class="language-python">DataFrame</code> was simply added on top of the first one. What if you want to add them alongside each other? Also, all the original indexes  remained. While it makes sense when dealing with meaningful indexes (for instance, years), in our case we would probably like to recalculate them. These and some other issues can be solved by adjusting the following parameters:</p>
+<ul>
+<li><code class="language-python">axis</code> — the axis along which to concatenate. Possible values are 0 and 1 (default '0'): <code class="language-python">axis=0</code> stands for combining along rows, and <code class="language-python">axis=1</code> is for combining along columns. Let's now set the value of <code class="language-python">axis</code> to 1:
+
+	<pre><code class="language-python">pd.concat([junior_class, senior_class], axis=1)
+
+#      Name 100m (sec.) 2km (min., sec.)    Name 100m (sec.) 2km (min., sec.)
+# 0     NaN         NaN              NaN    Jack        15.9             8,18
+# 1     Ann        16.3             9,24  Alicia        17.8             9,02
+# 2    Kate        17.1             9,45    Ella        17.0             8,58
+# 3  George        14.8             9,17   James        15.0             7,58
+# 4    Eric        14.3             8,14     NaN         NaN              NaN</code></pre>
+<p></p><div class="alert alert-primary">Did you notice that some fields are filled with NaN values? NaN stands for 'Not a number'. That's the way of handling missing values in <code class="language-python">pandas</code>: as we already noticed, <code class="language-python">junior_class</code> and <code class="language-python">senior_class</code> are indexed differently. So, every time there are such mismatches, unmatched fields of data will be filled with NaNs.</div><p></p>
+</li>
+<li><code class="language-python">ignore_index</code> — keeping or resetting the original indexes when concatenating. Possible values are 'True' and 'False' (default 'False'). If you want your resultant object to be reordered, specify <code class="language-python">ignore_index=True</code>. Now, the axis will be labeled with numeric indexes starting with 0:
+	<pre><code class="language-python">pd.concat([junior_class, senior_class], ignore_index=True)
+
+#      Name 100m (sec.) 2km (min., sec.)
+# 0     Ann        16.3             9,24
+# 1    Kate        17.1             9,45
+# 2  George        14.8             9,17
+# 3    Eric        14.3             8,14
+# 4    Jack        15.9             8,18
+# 5  Alicia        17.8             9,02
+# 6    Ella        17.0             8,58
+# 7   James        15.0             7,58</code></pre>
+</li>
+<li><code class="language-python">join</code> — combining with either the '<strong>outer</strong>' or '<strong>inner</strong>' type of joining (default 'outer'). The outer type of joining returns the union of all objects, that is, all their original rows will be preserved. On the contrary, the inner type includes only the rows that are labeled with indexes present in both datasets, excluding all other rows. Take a look at the following example: rows marked by numbers 1, 2, and 3 are present, but rows marked with 0 (from <code class="language-python">senior_class</code>) and 4 (from <code class="language-python">junior_class</code>) are eliminated:
+	<pre><code class="language-python">pd.concat([junior_class, senior_class], axis=1, join='inner')
+
+#      Name 100m (sec.) 2km (min., sec.)    Name 100m (sec.) 2km (min., sec.)
+# 1     Ann        16.3             9,24  Alicia        17.8             9,02
+# 2    Kate        17.1             9,45    Ella        17.0             8,58
+# 3  George        14.8             9,17   James        15.0             7,58</code></pre>
+</li>
+</ul>
+<ul>
+<li><code class="language-python">keys</code> — adding a new level of labels to indicate, for example, from which <code class="language-python">Series</code> or <code class="language-python">DataFrame</code> the values come from or group them in some other way. The names should be passed as a sequence, for example, list:
+
+	<pre><code class="language-python">pd.concat([junior_class, senior_class], keys=['Jun. class', 'Sen. class'])
+
+#                 Name 100m (sec.) 2km (min., sec.)
+# Jun. class 1     Ann        16.3             9,24
+#            2    Kate        17.1             9,45
+#            3  George        14.8             9,17
+#            4    Eric        14.3             8,14
+# Sen. class 0    Jack        15.9             8,18
+#            1  Alicia        17.8             9,02
+#            2    Ella        17.0             8,58
+#            3   James        15.0             7,58</code></pre>
+</li>
+</ul>
+<h5 id="merging-objects">Merging objects</h5>
+<p>Compared to <code class="language-python">concat()</code>, <code class="language-python">merge()</code> is a more flexible tool for combining that provides possibilities to go a little deeper into the structure of objects. The function is rooted in the idea of the so-called <strong>database-style joining</strong> — joining on the basis of shared columns.</p>
+<p></p><div class="alert alert-primary">If you are familiar with SQL and SQL types of joins, the principal functionality of <code class="language-python">merge()</code> will remind you of the following operations: INNER JOIN, LEFT OUTER JOIN, RIGHT OUTER JOIN, and FULL OUTER JOIN.</div><p></p>
+<p>The function needs two objects to operate on:</p>
+<ul>
+<li>a <code class="language-python">DataFrame</code> to join another object to;</li>
+<li>a <code class="language-python">DataFrame</code> or a named <code class="language-python">Series</code> to merge the first one with (you can specify the <code class="language-python">name</code> parameter when creating a <code class="language-python">Series</code>).</li>
+</ul>
+<p>We will use the <code class="language-python">DataFrame</code> called <code class="language-python">junior_class</code> from the previous section. Let's assume that we want to merge it with a new <code class="language-python">DataFrame</code> containing information about the age of participants. For the sake of illustration, we will include only three members:</p>
+<pre><code class="language-python">age_of_participants = pd.DataFrame({'Name': ['Ann', 'Eric', 'Ella'],
+                                    'Age': ['16', '16', '18']})</code></pre>
+<p>Now, let's just pass both <code class="language-python">DataFrame</code> objects to <code class="language-python">merge()</code>:</p>
+<pre><code class="language-python">junior_class.merge(age_of_participants)
+
+#    Name 100m (sec.) 2km (min., sec.) Age
+# 0   Ann        16.3             9,24  16
+# 1  Eric        14.3             8,14  16</code></pre>
+<p>As you can see, we have only two rows. Both <code class="language-python">junior_class</code> and <code class="language-python">age_of_participants</code> have the same column 'Name'. So, by default, they are joined on the basis of that one matching key. Only the rows that have overlapping values of 'Name' in both <code class="language-python">DataFrames</code> are outputted: the information about the age of other participants is unavailable and they will have NaN against their names in the column 'Age', so their results are not included in the final table. This happens because <code class="language-python">merge()</code> has a parameter similar to <code class="language-python">join</code> of <code class="language-python">concat()</code>, and it's by default set to the inner type of joining. Let's look through some other options and parameters to adjust the results:</p>
+<ul>
+<li><code class="language-python">how</code> — defines the way of merging. Possible values are '<strong>inner</strong>', '<strong>outer</strong>', '<strong>left</strong>', and '<strong>right</strong>' (default 'inner'). Above, we saw an example of the inner combining; if we specified 'outer', we would get the union of all the data. Let's see what happens if we write <code class="language-python">how='left'</code>:
+
+	<pre><code class="language-python">junior_class.merge(age_of_participants, how='left')
+
+#      Name 100m (sec.) 2km (min., sec.)  Age
+# 0     Ann        16.3             9,24   16
+# 1    Kate        17.1             9,45  NaN
+# 2  George        14.8             9,17  NaN
+# 3    Eric        14.3             8,14   16</code></pre>
+<p>We can see all entries from the first dataset, even though some values in the column 'Age' are absent. Similarly, <code class="language-python">how='right'</code> will get us all rows from the second <code class="language-python">DataFrame</code>. For example, the row, corresponding to the name 'Ella', has NaN values in '100m<em> </em>(sec.)' and '2km (min., sec.)', since <code class="language-python">junior_class</code> contains no information about her scores:</p>
+<pre><code class="language-python">junior_class.merge(age_of_participants, how='right')
+
+#    Name 100m (sec.) 2km (min., sec.) Age
+# 0   Ann        16.3             9,24  16
+# 1  Eric        14.3             8,14  16
+# 2  Ella         NaN              NaN  18</code></pre>
+</li>
+<li><code class="language-python">on</code> — specifies columns and index level names on which we want to join. By default, the columns with the same names are used as join keys; alternatively, we can pass the value(s) as a string or list, but the names should still be present in both objects we combine. In case we want to merge objects with different column names, we can turn to parameters <code class="language-python">left_on</code> and <code class="language-python">right_on</code>: the left <code class="language-python">DataFrame</code> is the one we pass first (<code class="language-python">junior_class</code> in the example above) and the right <code class="language-python">DataFrame</code> is the one to join with (<code class="language-python">age_of_participants</code> above). Accordingly, <code class="language-python">left_on</code> accepts names from the left <code class="language-python">DataFrame</code>, whereas <code class="language-python">right_on</code> takes names we can find in the right one.</li>
+</ul>
+<h5 id="differences">Differences</h5>
+<p>Now that we've looked through the use cases of both functions, let's clarify the key differences between them:</p>
+<ol>
+<li><strong>Main use cases</strong>. Generally, <code class="language-python">concat()</code> is used to simply place several objects next to each other or one on top of another; at the same time, <code class="language-python">merge()</code> is mainly utilized for database-like joining — its set of parameters makes joining more flexible and more content-aware.</li>
+<li><strong>The number of objects we can join</strong>. <code class="language-python">concat()</code> can accept a sequence of multiple objects, while <code class="language-python">merge()</code> allows us to join only two <code class="language-python">DataFrames</code> or a <code class="language-python">DataFrame</code> and a named <code class="language-python">Series</code>.</li>
+<li><strong>Axes</strong>. When using <code class="language-python">concat()</code>, you can specify the axis along which you need to join objects; <code class="language-python">merge()</code> supports only side-by-side joining.</li>
+<li><strong>Database-like operations</strong>. <code class="language-python">concat()</code> can perform only either inner or outer join, while <code class="language-python">merge()</code> can do inner, outer, left, and right types of joining.</li>
+</ol>
+<h5 id="conclusions">Conclusions</h5>
+<p>In this topic, you got acquainted with the <code class="language-python">concat()</code> and <code class="language-python">merge()</code> functions. Here are the main things to remember:</p>
+<ul>
+<li><code class="language-python">concat()</code> is the function used to perform simple concatenation on two or more <code class="language-python">DataFrame</code> or <code class="language-python">Series</code> objects. Its main parameters are <code class="language-python">axis</code>, <code class="language-python">ignore_index</code>, <code class="language-python">keys</code>, and <code class="language-python">join</code>.</li>
+<li><code class="language-python">merge()</code> is the function aimed mainly at SQL-style of combining on two <code class="language-python">DataFrames</code> or a <code class="language-python">DataFrame</code> and a named <code class="language-python">Series</code>. It accepts such arguments as <code class="language-python">how</code>, <code class="language-python">on</code>, <code class="language-python">left_on</code> and <code class="language-python">right_on</code>.</li>
+<li>Based on the differences in usage, the two functions have differences in their functionality, such as the number of objects to join, the axis, and types of join.</li>
+</ul></body></html>

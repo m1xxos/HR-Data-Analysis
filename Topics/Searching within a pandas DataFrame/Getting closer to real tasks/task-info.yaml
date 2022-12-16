@@ -1,0 +1,15 @@
+type: code
+files:
+- name: main.py
+  visible: true
+  text: |-
+    # your code here. the dataset is already loaded as sales_data.
+
+    print(...)
+  learner_created: false
+feedback_link: https://hyperskill.org/learn/step/15872#comment
+status: Solved
+feedback:
+  message: <html>Correct solution</html>
+  time: "Thu, 08 Dec 2022 19:41:52 UTC"
+record: -1

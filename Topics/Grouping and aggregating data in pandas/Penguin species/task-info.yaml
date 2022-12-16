@@ -1,0 +1,20 @@
+type: choice
+is_multiple_choice: false
+options:
+- text: "<code>df.groupby('species').agg({'island': 'unique'})</code>"
+- text: "<code>df.groupby('island').agg({'species': 'unique'})</code>"
+- text: "<code>df.groupby('island').agg({'species': 'nunique'})</code>"
+- text: "<code>df.groupby('species').agg({'species': 'unique'})</code>"
+- text: "<code>df.groupby('species').agg({'island': 'nunique'})</code>"
+- text: "<code>df.groupby('island').agg({'species': unique})</code>"
+files:
+- name: main.py
+  visible: true
+  text: |+
+    #  You can experiment here, it won’t be checked
+
+  learner_created: false
+feedback_link: https://hyperskill.org/learn/step/12586#comment
+status: Solved
+record: -1
+local_check: false

@@ -1,0 +1,135 @@
+<h2>Reshaping and Pivot Tables</h2>
+<p>Data reshaping can simplify the process of data computing/analyzing. It's very easy to turn categorical columns into rows and vice versa with Pandas.</p>
+
+<p>Automatically collected data (for example, a log of user actions or an aircraft flight recorder) usually have a flat structure, also known as "stacked" or "long". It often has an ordinal index, and every column reflects an attribute of a described object/process. That's why the word "features" in Machine Learning is used. The columns contain feature values. <br>
+This data is easy to process, but hard to evaluate at first glance.</p>
+
+<p style="text-align: center;"><img alt="" height="303" src="https://ucarecdn.com/fe16e27c-a341-4551-9b84-e0e56bb2d329/" width="600"></p>
+
+<p>Let's start with the very basic reshaping. When you need to quickly transform your data into a readable (and office-management favorite) format, use the <code class="language-python">.pivot()</code> method.</p>
+
+<h5 id="dataframepivot">DataFrame.pivot</h5>
+
+<p>Let's consider a simple example below. The Flights dataset shows how many people traveled by air from 1949 to 1960 by month. It can be imported from GitHub with one line (requires internet connection):</p>
+
+<pre><code class="language-python">df = pd.read_csv('https://raw.githubusercontent.com/mwaskom/seaborn-data/master/flights.csv')
+df.head()</code></pre>
+
+<p>Output:<br>
+<img alt="" src="https://ucarecdn.com/44c2c47e-d319-4c6b-9e42-219482be5d7d/"></p>
+
+<p>This dataset contains 144 rows. It's quite difficult to look at them at once. We can apply the following:</p>
+
+<pre><code class="language-python">df.pivot(index='year', columns='month', values='passengers')</code></pre>
+
+<p>Output:<br>
+<img alt="" height="361" src="https://ucarecdn.com/2487135e-3d75-4755-98d4-153609547f27/" width="699"></p>
+
+<p>Now we can see them all together to get some insights! For example, summertime flights were popular from the beginning and their number grew faster.<br>
+As you can see there are a couple of changes:</p>
+
+<ol>
+	<li>Index and columns now have names: "year" and "month".</li>
+	<li>The "year" column is now the index.</li>
+	<li>The "month" has been transformed into columns.</li>
+	<li>Each passenger value is now located where a year and a month collide.</li>
+</ol>
+
+<p>All further methods are Pandas functions. The first argument (the data argument) needs to be passed to the processed dataframe. It produces the same result:</p>
+
+<pre><code class="language-python">pd.pivot(df, index='year', columns='month', values='passengers')</code></pre>
+
+<p>However, if you need to build a pivot table with aggregation, for example, when there are dimension duplicates for rows and columns (one <code class="language-python">index</code>/<code class="language-python">columns</code> pair corresponds to more than one <code class="language-python">value</code> ), you should use <code class="language-python">.pivot_table ()</code></p>
+
+<h5 id="dataframepivot_table">DataFrame.pivot_table</h5>
+
+<p>This method allows you to build pivot tables with data aggregation. If every <code class="language-python">index</code>/<code class="language-python">columns</code> pair corresponds to only one value<em> </em>then the results are similar to the <code class="language-python">.pivot()</code> method. For example, we take a bit more complex dataset called "mpg" (miles per gallon) that contains cars from the past century and their specs.</p>
+
+<pre><code class="language-python">df = pd.read_csv('https://raw.githubusercontent.com/mwaskom/seaborn-data/master/mpg.csv')
+df.head()</code></pre>
+
+<p>Output:<br>
+<img alt="" src="https://ucarecdn.com/18e9b05a-5336-4f37-bfd9-436af1626160/"></p>
+
+<p>Suppose, we have to find the mean horsepower number of the cars presented by country and year. The <code class="language-python">.pivot_table()</code> should contain an aggregator in the <code class="language-python">aggfunc</code> argument. It finds the mean value by default. We need to specify the required values of the <code class="language-python">index</code> and <code class="language-python">columns</code> and we will round the results up to 1 decimal for neatness:</p>
+
+<pre><code class="language-python">df.pivot_table(index='origin', columns='model_year', values='horsepower').round(1)</code></pre>
+
+<p>Output:<br>
+<img alt="" src="https://ucarecdn.com/3187869c-33f6-4033-bda2-6e9f30702b37/"></p>
+
+<p>The changes are similar to the <code class="language-python">.pivot()</code> case, except that at the intersection of an origin country and a model year, we got the horsepower mean for that year and country.</p>
+
+<p>You may be wondering: "Why on earth do I need those pivot tables when I could do grouping and aggregations without them?!"<br>
+To show you why let's try to implement the following request: "In which year(s) the median horsepower of Japanese cars was less than of the European?" Without a pivot table, the solution could look like this:</p>
+
+<pre><code class="language-python">japan = df.query("origin == 'japan'")\
+          .groupby(['model_year'])\
+          .agg({'horsepower':'median'})
+merged_median_hp = df.query("origin == 'europe'")\
+                     .groupby(['model_year'])\
+                     .agg({'horsepower':'median'})\
+                     .merge(japan, 
+                            on='model_year', 
+                            suffixes=['_europe', '_japan'])
+merged_median_hp.loc[merged_median_hp.horsepower_europe &gt; merged_median_hp.horsepower_japan]</code></pre>
+
+<p>Output:<br>
+<img alt="" src="https://ucarecdn.com/4ad6ae21-15cd-4922-89ad-5f0e6180643b/"></p>
+
+<p>Here, a separate data frame is created with Japanese cars grouped by year, then a part of the original data frame with European machines grouped by year is taken, and merged with Japanese ones in another data frame. After that, the required lines are selected with <code class="language-python">.loc</code>. But we could have done it with <code class="language-python">.pivot_table()</code> instead:</p>
+
+<pre><code class="language-python">pivot_median_hp = df.pivot_table(index='model_year', 
+                               columns='origin', 
+                               values='horsepower',
+                               aggfunc='median')
+pivot_median_hp.loc[pivot_median_hp.europe &gt; pivot_median_hp.japan, 
+                    ['europe', 'japan']]</code></pre>
+
+<p>Output:<br>
+<img alt="" src="https://ucarecdn.com/de83efd8-1454-49b5-a3ea-1c45be25495e/"></p>
+
+<p>Pivot and locate. That's brilliant.</p>
+
+<p><button
+        class="btn-sm btn-outline-secondary"
+        onclick="getElementById('hint-6121').style.display='inline'">
+        Hint
+      </button>
+      <div id="hint-6121" style="display:none;">You can create multi-index and multi-level columns by passing lists with field names to the <code class="language-python">index</code> and <code class="language-python">columns</code> arguments.</div></p>
+
+<h5 id="dataframemelt">DataFrame.melt</h5>
+
+<p>If our data is pivoted and we want to make it flat, we can use the <code class="language-python">.melt()</code> method. The object <code class="language-python">wide_df</code> here refers to the pivot table, containing the average engine horsepower by year and region of the production. </p>
+
+<pre><code class="language-python">wide_df</code></pre>
+
+<p>Output:<br>
+<img alt="" src="https://ucarecdn.com/6d96a9df-4c78-48dc-8dce-c6aff95c4a29/"></p>
+
+<p>Let's transform all "year" columns into one by calling <code class="language-python">.melt()</code> with suitable parameters. For the <code class="language-python">id_vars</code> argument, we set the column name that contains an identifier. In our case, it is the "origin". Further, we should set the <code class="language-python">value_vars</code> argument to the list of columns. <code class="language-python">.melt()</code> by default takes all other columns for <code class="language-python">value_vars</code> , so we just omit this argument. Then output the first 10 rows of the resulting dataframe:</p>
+
+<pre><code class="language-python">wide_df.melt(id_vars='origin').head(10)</code></pre>
+
+<p>Output:<br>
+<img alt="" src="https://ucarecdn.com/0b04826d-9eda-4cd7-be5d-6ae48a42fbf5/"></p>
+
+<p>If we want to take, for example, only the last three columns from the original to reshape them in one, we pass their names to <code class="language-python">value_vars</code>:</p>
+
+<pre><code class="language-python">wide_df.melt(id_vars='origin', value_vars=wide_df.columns[-3:])</code></pre>
+
+<p>Output:<br>
+<img alt="" src="https://ucarecdn.com/3d8f459b-4a81-41d5-ad35-842434a97d27/"></p>
+
+<p>We can use <code class="language-python">.melt()</code> for collecting and storing the data from manually inputted tables. Spreadsheets with "wide format" are easier to fill and they can be immediately evaluated by sight, but for analyzing that data with Pandas, it is better to reshape it.</p>
+
+<h5 id="summary">Summary</h5>
+
+<p>As a result, now you know how to:</p>
+
+<ul>
+	<li>reshape and evaluate data with pivot tables with <code class="language-python">.pivot()</code> and <code class="language-python">.pivot_table()</code>,</li>
+	<li>transform data back to "stacked" format with <code class="language-python">.melt()</code>.</li>
+</ul>
+
+<p>You can quickly evaluate big tables with categorical data, find mutual feature frequencies, and transform manually inputted tables to a format that is easy to compute. Every time you get the feeling that you code too much to answer a simple question you should ask yourself: "Maybe the shape of my data is fuzzy and I need to change it?"</p>

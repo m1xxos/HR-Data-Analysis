@@ -1,0 +1,15 @@
+type: code
+files:
+- name: main.py
+  visible: true
+  text: |-
+    # your code here. The data frame is already loaded and stored as chart2020.
+
+    print(...)
+  learner_created: false
+feedback_link: https://hyperskill.org/learn/step/13347#comment
+status: Solved
+feedback:
+  message: <html>Correct solution</html>
+  time: "Thu, 08 Dec 2022 19:26:46 UTC"
+record: -1
